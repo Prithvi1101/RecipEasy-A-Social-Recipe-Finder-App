@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feed - RecipEasy</title>
+  <link rel="stylesheet" href="auth-style.css" />
+  <style>
+    /* General Styles for PC (Already in place) */
+body {
+  background: url('bg-img.png') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 2em;
+}
+
+.feed-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: rgba(197, 191, 104, 0.95);
+  padding: 2em;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.post {
+  background: #fff;
+  padding: 1em;
+  border-radius: 10px;
+  margin-bottom: 1.5em;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+}
+
+.post img, .post video {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.post-header {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.follow-btn {
+  padding: 0.3em 0.8em;
+  font-size: 0.85em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #f4c531;
+  color: white;
+  font-weight: bold;
+}
+
+.follow-btn.unfollow { 
+  background-color: #6c757d; 
+}
+
+.yt-link {
+  display: inline-block;
+  margin-top: 0.5em;
+  color: #ff0000;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.reaction-bar {
+  margin-top: 0.8em;
+}
+
+.reaction-bar button {
+  padding: 0.4em 1em;
+  border: none;
+  background-color: #f4c531;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-right: 0.5em;
+}
+
+.comment-box {
+  margin-top: 1em;
+  border-top: 1px solid #ddd;
+  padding-top: 1em;
+}
+
+.comment-box textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 0.5em;
+  border-radius: 6px;
+  margin-bottom: 0.5em;
+}
+
+.comment {
+  font-size: 0.9em;
+  background: #f9f9f9;
+  margin-bottom: 0.5em;
+  padding: 0.5em;
+  border-radius: 6px;
+}
+
+.comment strong { color: #333; }
+
+/* Mobile Specific Styles (Responsive) */
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  body {
+    padding: 1em;
+  }
+
+  .feed-container {
+    padding: 1.5em;
+  }
+
+  .post {
+    padding: 0.8em;
+  }
+
+  .post-header {
+    font-size: 1em;
+  }
+
+  .reaction-bar button {
+    padding: 0.4em 0.6em;
+  }
+
+  .yt-link {
+    font-size: 0.9em;
+  }
+
+  .comment-box textarea {
+    font-size: 0.9em;
+  }
+
+  .follow-btn {
+    font-size: 0.8em;
+    padding: 0.3em 0.7em;
+  }
+
+  .comment-box h4 {
+    font-size: 1em;
+  }
+
+  .post img, .post video {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+}
+
+/* Smaller Mobile Screens */
+@media (max-width: 480px) {
+  body {
+    padding: 0.5em;
+  }
+
+  .feed-container {
+    padding: 1em;
+  }
+
+  .follow-btn {
+    font-size: 0.7em;
+    padding: 0.3em 0.6em;
+  }
+
+  .yt-link {
+    font-size: 0.85em;
+  }
+
+  .reaction-bar button {
+    padding: 0.4em 0.5em;
+  }
+
+  .comment-box textarea {
+    font-size: 0.85em;
+    padding: 0.4em;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <h2 style="text-align:center; margin-top: 0;font-family: 'Cursive', 'Lucida Handwriting', sans-serif; color:#ffffff;font-size: large; font-weight: bolder;">RecipEasy</h2>
+
+  <button onclick="goBack()" style="
+    display: block;
+    margin: 1em auto 2em;
+    padding: 0.6em 1.5em;
+    font-size: 1em;
+    background-color: #f4c531;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  ">🔙 Back</button>
+
+  <div class="feed-container" id="feed"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    function goBack() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "dashboard.html";
+      }
+    }
+
+    function base64ToBlobUrl(base64) {
+      const [meta, content] = base64.split(',');
+      const mime = meta.match(/:(.*?);/)[1];
+      const byteChars = atob(content);
+      const byteArrays = [];
+
+      for (let i = 0; i < byteChars.length; i += 512) {
+        const slice = byteChars.slice(i, i + 512);
+        const byteNumbers = new Array(slice.length);
+        for (let j = 0; j < slice.length; j++) {
+          byteNumbers[j] = slice.charCodeAt(j);
+        }
+        byteArrays.push(new Uint8Array(byteNumbers));
+      }
+
+      const blob = new Blob(byteArrays, { type: mime });
+      return URL.createObjectURL(blob);
+    }
+
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged((user) => {
+      if (!user) return location.href = "login.html";
+
+      const feed = document.getElementById("feed");
+      const posts = JSON.parse(localStorage.getItem("posts") || "[]")
+        .filter(post => post.status === "approved")
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      if (posts.length === 0) {
+        feed.innerHTML = "<p>No posts available yet.</p>";
+        return;
+      }
+
+      const currentUserData = JSON.parse(localStorage.getItem(`user_${user.uid}`) || '{}');
+
+      posts.forEach(post => {
+        const mediaSrc = post.mediaUrls?.[0]?.startsWith("data:")
+          ? base64ToBlobUrl(post.mediaUrls[0])
+          : post.mediaUrls?.[0];
+
+        const likedByUser = post.likes?.includes(user.uid);
+        const isShared = post.shared === true;
+        const alreadyShared = !!posts.find(p => p.shared === true && p.originalId === post.timestamp && p.authorId === user.uid);
+
+        const authorId = post.authorId;
+        const authorData = JSON.parse(localStorage.getItem(`user_${authorId}`) || '{}');
+        const authorName = authorData.name || post.authorName || "Unknown";
+        const isOwnPost = user.uid === authorId;
+        const isFollowing = currentUserData.following?.includes(authorId);
+
+        const followButton = isOwnPost ? "" : `
+          <button class="follow-btn ${isFollowing ? 'unfollow' : ''}" onclick="toggleFollow('${authorId}')">
+            ${isFollowing ? '✓ Following' : '+ Follow'}
+          </button>`;
+
+        const commentList = (post.comments || []).map(c =>
+          `<div class="comment"><strong>${c.name || c.userId}</strong>: ${c.text}</div>`
+        ).join("");
+
+        const displayDate = post.timestamp && !isNaN(Date.parse(post.timestamp))
+          ? new Date(post.timestamp).toLocaleString()
+          : "Unknown date";
+
+        const div = document.createElement("div");
+        div.className = "post";
+        div.innerHTML = `
+          <div class="post-header">
+            <span>${isShared ? '🔁 Shared: ' + authorName : authorName}</span>
+            ${followButton}
+          </div>
+          <div class="post-title"><strong>${post.title}</strong></div>
+          <p>${post.instructions}</p>
+          ${post.mediaUrls?.[0]?.includes("video")
+            ? `<video controls src="${mediaSrc}"></video>`
+            : `<img src="${mediaSrc}" alt="Post Media" />`}
+          ${post.youtubeLink ? `<a href="${post.youtubeLink}" target="_blank" class="yt-link">▶ Watch on YouTube</a>` : ''}
+          <div style="font-size: 0.85em; color: #555;">${displayDate}</div>
+          <div class="reaction-bar">
+            <button onclick="toggleLike('${post.timestamp}')">
+              ${likedByUser ? '💛 Unlike' : '❤️ Like'} (${post.likes?.length || 0})
+            </button>
+            ${!isShared && !alreadyShared ? `<button onclick="sharePost('${post.timestamp}')">🔁 Share</button>` : ''}
+          </div>
+          <div class="comment-box">
+            <h4>💬 Comments</h4>
+            ${commentList || '<p>No comments yet.</p>'}
+            <textarea id="comment-${post.timestamp}" placeholder="Add a comment..."></textarea>
+            <button onclick="submitComment('${post.timestamp}')">Submit</button>
+          </div>
+        `;
+        feed.appendChild(div);
+      });
+    });
+
+    function toggleFollow(authorId) {
+      const user = firebase.auth().currentUser;
+      const myKey = `user_${user.uid}`;
+      const targetKey = `user_${authorId}`;
+      const me = JSON.parse(localStorage.getItem(myKey) || '{}');
+      const them = JSON.parse(localStorage.getItem(targetKey) || '{}');
+
+      me.following = me.following || [];
+      them.followers = them.followers || [];
+
+      const i = me.following.indexOf(authorId);
+      if (i === -1) {
+        me.following.push(authorId);
+        them.followers.push(user.uid);
+      } else {
+        me.following.splice(i, 1);
+        them.followers = them.followers.filter(f => f !== user.uid);
+      }
+
+      localStorage.setItem(myKey, JSON.stringify(me));
+      localStorage.setItem(targetKey, JSON.stringify(them));
+      location.reload();
+    }
+
+    function toggleLike(timestamp) {
+      const user = firebase.auth().currentUser;
+      const posts = JSON.parse(localStorage.getItem("posts") || "[]");
+      const updated = posts.map(p => {
+        if (p.timestamp === timestamp) {
+          p.likes = p.likes || [];
+          const i = p.likes.indexOf(user.uid);
+          i === -1 ? p.likes.push(user.uid) : p.likes.splice(i, 1);
+        }
+        return p;
+      });
+      localStorage.setItem("posts", JSON.stringify(updated));
+      location.reload();
+    }
+
+    function submitComment(timestamp) {
+      const user = firebase.auth().currentUser;
+      const text = document.getElementById(`comment-${timestamp}`).value.trim();
+      if (!text) return alert("Comment cannot be empty.");
+      const localUser = JSON.parse(localStorage.getItem(`user_${user.uid}`) || '{}');
+      const comment = { userId: user.uid, name: localUser.name || user.email, text, time: new Date().toISOString() };
+      const posts = JSON.parse(localStorage.getItem("posts") || "[]");
+      posts.forEach(p => {
+        if (p.timestamp === timestamp) {
+          p.comments = p.comments || [];
+          p.comments.push(comment);
+        }
+      });
+      localStorage.setItem("posts", JSON.stringify(posts));
+      location.reload();
+    }
+
+    function sharePost(originalTimestamp) {
+      const user = firebase.auth().currentUser;
+      const posts = JSON.parse(localStorage.getItem("posts") || "[]");
+      const originalPost = posts.find(p => p.timestamp === originalTimestamp);
+      if (!originalPost) return alert("Post not found");
+      const sharedPost = {
+        ...originalPost,
+        timestamp: Date.now().toString(),
+        shared: true,
+        originalId: originalTimestamp,
+        authorId: user.uid,
+        mediaUrls: [...(originalPost.mediaUrls || [])]
+      };
+      posts.push(sharedPost);
+      originalPost.sharedBy = originalPost.sharedBy || [];
+      if (!originalPost.sharedBy.includes(user.uid)) originalPost.sharedBy.push(user.uid);
+      localStorage.setItem("posts", JSON.stringify(posts));
+      alert("✅ Post shared!");
+      location.reload();
+    }
+  </script>
+</body>
+</html>

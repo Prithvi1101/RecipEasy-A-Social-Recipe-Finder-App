@@ -1,0 +1,44 @@
+{
+  "name": "recipeasy",
+  "version": "1.0.0",
+  "main": "www/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"electron .\" \"node server.js\"",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^7.2.0",
+    "@capacitor/cli": "^7.2.0",
+    "@capacitor/core": "^7.2.0",
+    "@capacitor/filesystem": "^7.1.1",
+    "@google-cloud/dialogflow": "^7.1.0",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "deepseek": "^0.0.2",
+    "dialogflow": "^1.2.0",
+    "express": "^5.1.0",
+    "firebase-admin": "^13.4.0",
+    "multer": "^2.0.1",
+    "mysql2": "^3.14.1"
+  },
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^7.0.0",
+    "electron": "^16.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.recipeasy.app",
+    "productName": "Recipeasy",
+    "win": {
+      "target": "nsis"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  }
+}

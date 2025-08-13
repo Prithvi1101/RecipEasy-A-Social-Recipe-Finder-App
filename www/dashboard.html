@@ -1,0 +1,102 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - RecipEasy</title>
+  <link rel="stylesheet" href="auth-style.css">
+  <style>
+    body {
+      background: url('bg-img.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .dashboard-container {
+      width: 90%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2em;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 1em;
+      color: #202030;
+    }
+
+    .nav-btn {
+      display: block;
+      width: 100%;
+      padding: 0.9em;
+      margin-bottom: 1em;
+      background-color: #f4c531;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .nav-btn:hover {
+      background-color: #d4b420;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <h1>Welcome to RecipEasy!</h1>
+    <button class="nav-btn" onclick="goTo('feed.html')">📰 View Timeline Feed</button>
+    <button class="nav-btn" onclick="goTo('food-finder.html')">🍲 Search Recipes</button>
+<button class="nav-btn" onclick="goTo('restaurant.html')">🏨🍴 Visit Restaurants!</button>
+
+    <button class="nav-btn" onclick="goTo('post.html')">➕ Post a New Recipe</button>
+    <button class="nav-btn" onclick="goTo('chat.html')">👤 Chat with users!</button>
+    <button class="nav-btn" onclick="goTo('chatbot.html')">🔌🤖 Try our offline chatbot!</button>
+
+    <button class="nav-btn" onclick="goTo('chatbot-online.html')">🌐🤖 Try our online chatbot!</button>
+
+    <button class="nav-btn" onclick="goTo('food-identify.html')">🔍🍽️ Identify food!</button>
+    <button class="nav-btn" onclick="goTo('pantry.html')">🗃️🥫 Smart Pantry</button>
+<!-- Pantry box + canned food -->
+
+    <button class="nav-btn" onclick="goTo('profile.html')">🙍‍♂️ View My Profile</button>
+
+    <button class="nav-btn" onclick="logout()">🚪 Logout</button>
+
+  </div>
+
+  <script>
+    function goTo(page) {
+      window.location.href = page;
+    }
+
+    function logout() {
+      if (firebase && firebase.auth) {
+        firebase.auth().signOut().then(() => {
+          alert("Logged out successfully.");
+          window.location.href = "login.html";
+        });
+      } else {
+        alert("Firebase not available.");
+      }
+    }
+  </script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!-- ✅ admin-panel.html (final version with full features) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - RecipEasy</title>
+  <link rel="stylesheet" href="auth-style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: url('bg-img.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .back-btn {
+      align-self: flex-start;
+      background-color: #ccc;
+      color: #333;
+      padding: 0.5em 1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 1em;
+    }
+    .admin-section {
+      width: 100%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2em;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+      margin-bottom: 2em;
+    }
+    .recipe-entry, .post-entry {
+      background: white;
+      padding: 1em;
+      margin-bottom: 1.5em;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .recipe-entry img, .recipe-entry video,
+    .post-entry img, .post-entry video {
+      max-width: 100%;
+      margin-top: 0.8em;
+      border-radius: 8px;
+    }
+    .admin-controls {
+      margin-top: 1em;
+      display: flex;
+      gap: 1em;
+    }
+    .admin-controls button {
+      flex: 1;
+      padding: 0.6em;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #f4c531;
+    }
+    .admin-controls .reject {
+      background-color: #dc3545;
+      color: white;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1em;
+      margin-bottom: 1em;
+    }
+    .stat-card {
+      background: white;
+      padding: 1em;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      text-align: center;
+      font-weight: bold;
+    }
+    .post-header {
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5em;
+    }
+    .comment {
+      font-size: 0.9em;
+      background: #f9f9f9;
+      margin: 0.5em 0;
+      padding: 0.5em;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="back-btn" onclick="goBack()">🔙 Back</button>
+
+  <div class="admin-section">
+    <h2>📊 App Statistics</h2>
+    <div class="stats-grid" id="stats-summary"></div>
+    <canvas id="postChart" height="120"></canvas>
+  </div>
+
+  <div class="admin-section">
+    <h2>📝 Pending Recipe Approvals</h2>
+    <div id="pending-recipes">Loading...</div>
+  </div>
+
+  <div class="admin-section">
+    <h2>🚫 Rejected Posts</h2>
+    <div id="rejected-recipes">Loading...</div>
+  </div>
+
+  <div class="admin-section">
+    <h2>📰 Timeline Feed (Read-Only)</h2>
+    <div id="readonly-feed">Loading feed...</div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    function goBack() {
+      if (history.length > 1) history.back();
+      else location.href = "dashboard.html";
+    }
+
+    function base64ToBlobUrl(base64) {
+      const [meta, content] = base64.split(',');
+      const mime = meta.match(/:(.*?);/)[1];
+      const byteChars = atob(content);
+      const byteArrays = [];
+      for (let i = 0; i < byteChars.length; i += 512) {
+        const slice = byteChars.slice(i, i + 512);
+        const byteNumbers = new Array(slice.length);
+        for (let j = 0; j < slice.length; j++) {
+          byteNumbers[j] = slice.charCodeAt(j);
+        }
+        byteArrays.push(new Uint8Array(byteNumbers));
+      }
+      return URL.createObjectURL(new Blob(byteArrays, { type: mime }));
+    }
+
+    const auth = firebase.auth();
+    auth.onAuthStateChanged(user => {
+      if (!user) return location.href = "login.html";
+      showStats();
+      loadPending();
+      loadRejected();
+      loadFeed();
+    });
+
+    function showStats() {
+      const users = Object.keys(localStorage).filter(k => k.startsWith("user_")).length;
+      const posts = JSON.parse(localStorage.getItem("posts") || "[]");
+      const approved = posts.filter(p => p.status === "approved").length;
+      const pending = posts.filter(p => p.status === "pending").length;
+      const rejected = posts.filter(p => p.status === "rejected").length;
+      const shared = posts.filter(p => p.shared).length;
+      const dateCounts = {};
+
+      posts.forEach(p => {
+        const validDate = new Date(p.timestamp);
+        const d = !isNaN(validDate) ? validDate.toLocaleDateString() : "Unknown";
+        dateCounts[d] = (dateCounts[d] || 0) + 1;
+      });
+
+      document.getElementById("stats-summary").innerHTML = `
+        <div class="stat-card">👥 Users<br>${users}</div>
+        <div class="stat-card">🧾 Total Posts<br>${posts.length}</div>
+        <div class="stat-card">✅ Approved<br>${approved}</div>
+        <div class="stat-card">🕓 Pending<br>${pending}</div>
+        <div class="stat-card">❌ Rejected<br>${rejected}</div>
+        <div class="stat-card">🔁 Shared<br>${shared}</div>
+      `;
+
+      new Chart(document.getElementById("postChart"), {
+        type: "line",
+        data: {
+          labels: Object.keys(dateCounts),
+          datasets: [{
+            label: "Posts per Day",
+            data: Object.values(dateCounts),
+            borderColor: "#f4c531",
+            fill: false,
+            tension: 0.2
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    function loadPending() {
+      const container = document.getElementById("pending-recipes");
+      const posts = JSON.parse(localStorage.getItem("posts") || []);
+      const pending = posts.map((p, i) => ({ ...p, index: i })).filter(p => p.status === "pending");
+      container.innerHTML = pending.length ? "" : "<p>No pending recipes.</p>";
+
+      pending.forEach(post => {
+        const media = post.mediaUrls?.[0]?.startsWith("data:")
+          ? base64ToBlobUrl(post.mediaUrls[0])
+          : post.mediaUrls?.[0] || "";
+        const mediaHTML = post.mediaUrls?.[0]?.includes("video")
+          ? `<video controls src="${media}"></video>`
+          : `<img src="${media}" alt="Post Media" />`;
+        const div = document.createElement("div");
+        div.className = "recipe-entry";
+        div.innerHTML = `
+          <h4>${post.title}</h4>
+          <p><strong>By:</strong> ${post.authorName}</p>
+          <p>${post.instructions.slice(0, 100)}...</p>
+          ${mediaHTML}
+          <div class="admin-controls">
+            <button onclick="approve(${post.index})">✅ Approve</button>
+            <button class="reject" onclick="reject(${post.index})">❌ Reject</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function loadRejected() {
+      const container = document.getElementById("rejected-recipes");
+      const posts = JSON.parse(localStorage.getItem("posts") || []);
+      const rejected = posts.filter(p => p.status === "rejected");
+      container.innerHTML = rejected.length ? "" : "<p>No rejected posts yet.</p>";
+
+      rejected.forEach(post => {
+        const media = post.mediaUrls?.[0]?.startsWith("data:")
+          ? base64ToBlobUrl(post.mediaUrls[0])
+          : post.mediaUrls?.[0] || "";
+        const mediaHTML = post.mediaUrls?.[0]?.includes("video")
+          ? `<video controls src="${media}"></video>`
+          : `<img src="${media}" alt="Post Media" />`;
+
+        const div = document.createElement("div");
+        div.className = "recipe-entry";
+        div.innerHTML = `
+          <h4>${post.title}</h4>
+          <p><strong>By:</strong> ${post.authorName}</p>
+          <p>${post.instructions.slice(0, 100)}...</p>
+          ${mediaHTML}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function loadFeed() {
+      const container = document.getElementById("readonly-feed");
+      const posts = JSON.parse(localStorage.getItem("posts") || []).filter(p => p.status === "approved");
+      container.innerHTML = "";
+
+      posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(post => {
+        const media = post.mediaUrls?.[0]?.startsWith("data:")
+          ? base64ToBlobUrl(post.mediaUrls[0])
+          : post.mediaUrls?.[0] || "";
+        const authorData = JSON.parse(localStorage.getItem(`user_${post.authorId}`) || '{}');
+        const authorName = authorData.name || post.authorName || "Unknown";
+        const comments = (post.comments || []).map(c =>
+          `<div class="comment"><strong>${c.name || c.userId}</strong>: ${c.text}</div>`).join('');
+        const div = document.createElement("div");
+        div.className = "post-entry";
+        div.innerHTML = `
+          <div class="post-header">
+            <span>${post.shared ? '🔁 Shared: ' + authorName : authorName}</span>
+<span>${
+  !isNaN(Date.parse(post.timestamp)) 
+    ? new Date(post.timestamp).toLocaleString() 
+    : (!isNaN(Number(post.timestamp)) 
+        ? new Date(Number(post.timestamp)).toLocaleString() 
+        : "Unknown date")
+}</span>
+          </div>
+          <h4>${post.title}</h4>
+          <p>${post.instructions}</p>
+          ${post.mediaUrls?.[0]?.includes("video")
+            ? `<video controls src="${media}"></video>`
+            : `<img src="${media}" alt="Post Media" />`}
+          ${post.youtubeLink ? `<p><a href="${post.youtubeLink}" target="_blank">▶ YouTube</a></p>` : ''}
+          <p><strong>Likes:</strong> ${post.likes?.length || 0}</p>
+          <div><strong>💬 Comments</strong>${comments || "<p>No comments yet.</p>"}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function approve(index) {
+      const posts = JSON.parse(localStorage.getItem("posts") || []);
+      posts[index].status = "approved";
+      localStorage.setItem("posts", JSON.stringify(posts));
+      alert("✅ Approved.");
+      loadPending();
+      showStats();
+    }
+
+    function reject(index) {
+      const posts = JSON.parse(localStorage.getItem("posts") || []);
+      posts[index].status = "rejected";
+      localStorage.setItem("posts", JSON.stringify(posts));
+      alert("❌ Rejected.");
+      loadPending();
+      showStats();
+    }
+  </script>
+</body>
+</html>

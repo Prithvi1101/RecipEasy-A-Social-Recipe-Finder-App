@@ -1,0 +1,19 @@
+# Gradle / builds
+.gradle/
+**/build/
+.cxx/
+.externalNativeBuild/
+captures/
+
+# Local machine / secrets
+local.properties
+*.keystore
+*.jks
+*.keystore.properties
+
+# IDE
+.idea/
+*.iml
+
+# Keep Gradle wrapper (track this JAR)
+!gradle/wrapper/gradle-wrapper.jar

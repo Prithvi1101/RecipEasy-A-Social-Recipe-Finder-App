@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find Nearby Restaurants - RecipEasy</title>
+  <link rel="stylesheet" href="auth-style.css" />
+  <style>
+    body {
+      background: url('bg-img.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .restaurant-container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2em;
+      border-radius: 15px;
+      max-width: 450px;
+      width: 90%;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 0.8em;
+      margin-bottom: 1em;
+      border-radius: 8px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .submit-btn {
+      background: #f4c531;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .submit-btn:hover {
+      background-color: #d4b420;
+    }
+
+    .back-btn {
+      margin-bottom: 1em;
+      background-color: #ccc;
+      color: #333;
+      font-weight: bold;
+      border: none;
+      padding: 0.5em;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .info {
+      text-align: center;
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+<div class="restaurant-container">
+  <button class="back-btn" onclick="goBack()">🔙 Back</button>
+  <h2>🍽️ Find Nearby Restaurants</h2>
+
+  <input type="text" id="food" placeholder="What do you want to eat? (e.g. Biryani)">
+  <input type="text" id="location" placeholder="Enter your location in Bangladesh (e.g. Gulshan, Dhaka)">
+  <button class="submit-btn" onclick="openGoogleMaps()">Find Restaurants on Google Maps</button>
+
+  <div class="info">🔎 Powered by Google Maps</div>
+</div>
+
+<script>
+  function goBack() {
+    window.history.length > 1 ? window.history.back() : window.location.href = "dashboard.html";
+  }
+
+  function openGoogleMaps() {
+    const food = document.getElementById("food").value.trim();
+    const location = document.getElementById("location").value.trim();
+
+    if (!food || !location) {
+      alert("❗ Please enter both food and location.");
+      return;
+    }
+
+    const query = encodeURIComponent(`${food} restaurants in ${location}, Bangladesh`);
+    const mapsUrl = `https://www.google.com/maps/search/${query}`;
+
+    window.open(mapsUrl, "_blank");
+  }
+</script>
+</body>
+</html>

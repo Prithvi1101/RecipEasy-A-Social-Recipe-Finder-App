@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat - RecipEasy</title>
+  <link rel="stylesheet" href="auth-style.css" />
+  <style>
+    body {
+      background: url('bg-img.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .chat-container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2em;
+      border-radius: 15px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-btn {
+      background-color: #ccc;
+      color: #333;
+      padding: 0.5em 1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 1em;
+    }
+
+    .back-btn:hover {
+      background-color: #bbb;
+    }
+
+    .user-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1em;
+    }
+
+    .user-list li {
+      padding: 1em;
+      background-color: #fff;
+      margin: 0.5em 0;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-list li:hover {
+      background-color: #f4c531;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="back-btn" onclick="goBack()">🔙 Back</button>
+
+  <div class="chat-container">
+    <h2>Select a User to Chat With</h2>
+    <ul class="user-list" id="user-list">
+      <!-- User list items will be populated dynamically -->
+    </ul>
+  </div>
+
+  <script>
+    const currentUser = 'Asif Mahmud'; // Fetch the logged-in user dynamically (e.g., from Firebase Auth or localStorage)
+    
+    // Get the user data dynamically from localStorage (or fetch from database)
+    const users = Object.keys(localStorage)
+      .filter(key => key.startsWith("user_")) // Filter out only user data from localStorage
+      .map(key => JSON.parse(localStorage.getItem(key)).name); // Get the user names
+
+    // Exclude the currently logged-in user from the list
+    const filteredUsers = users.filter(user => user !== currentUser);
+
+    const userListElement = document.getElementById('user-list');
+    filteredUsers.forEach(user => {
+      const li = document.createElement('li');
+      li.innerHTML = user;
+      li.onclick = () => startChat(user);
+      userListElement.appendChild(li);
+    });
+
+    function goBack() {
+      window.history.back(); // Go back to the previous page
+    }
+
+    function startChat(user) {
+      localStorage.setItem('chatWith', user); // Store the selected user for chat
+      window.location.href = 'chat-window.html'; // Navigate to chat window
+    }
+  </script>
+</body>
+</html>

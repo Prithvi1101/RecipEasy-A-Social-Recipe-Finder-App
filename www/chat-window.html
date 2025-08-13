@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Window - RecipEasy</title>
+  <link rel="stylesheet" href="auth-style.css" />
+  <style>
+    body {
+      background: url('bg-img.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .back-btn {
+      background-color: #ccc;
+      color: #333;
+      padding: 0.5em 1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 1em;
+    }
+
+    .back-btn:hover {
+      background-color: #bbb;
+    }
+
+    .chat-container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2em;
+      border-radius: 15px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .message-box {
+      width: 100%;
+      padding: 1em;
+      margin-bottom: 1em;
+      resize: none;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .send-btn {
+      background: #f4c531;
+      padding: 1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .send-btn:hover {
+      background-color: #d4b420;
+    }
+
+    .messages {
+      margin-bottom: 20px;
+      height: 300px;
+      overflow-y: scroll;
+    }
+
+    .message {
+      padding: 0.6em;
+      margin: 0.5em 0;
+      background-color: #f1f1f1;
+      border-radius: 8px;
+    }
+
+    .message.sent {
+      background-color: #f4c531;
+      text-align: right;
+    }
+
+    .message.received {
+      background-color: #d4d4d4;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="back-btn" onclick="goBack()">🔙 Back</button>
+
+  <div class="chat-container">
+    <h2>Chat with <span id="chat-user"></span></h2>
+
+    <div class="messages" id="messages"></div>
+
+    <textarea class="message-box" id="message-box" placeholder="Type your message..."></textarea>
+    <button class="send-btn" onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const currentUser = 'Asif Mahmud'; // Fetch this dynamically (e.g. from Firebase Auth)
+    const chatWith = localStorage.getItem('chatWith');
+    document.getElementById('chat-user').textContent = chatWith;
+
+    // Load previous messages
+    const messagesKey = `messages_${currentUser}_${chatWith}`;
+    let messages = JSON.parse(localStorage.getItem(messagesKey) || '[]');
+
+    function loadMessages() {
+      const messageList = document.getElementById('messages');
+      messageList.innerHTML = '';
+
+      // Filter messages between the current user and the selected user
+      const filteredMessages = messages.filter(m => 
+        (m.sender === currentUser && m.receiver === chatWith) || 
+        (m.sender === chatWith && m.receiver === currentUser)
+      );
+
+      filteredMessages.forEach(msg => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${msg.sender === currentUser ? 'sent' : 'received'}`;
+        messageDiv.textContent = `${msg.sender}: ${msg.message}`;
+        messageList.appendChild(messageDiv);
+      });
+
+      // Scroll to the bottom of the messages
+      messageList.scrollTop = messageList.scrollHeight;
+    }
+
+    function sendMessage() {
+      const message = document.getElementById('message-box').value.trim();
+      if (!message) return;
+
+      // Store message in localStorage
+      const newMessage = {
+        sender: currentUser,
+        receiver: chatWith,
+        message: message,
+        timestamp: new Date().toISOString()
+      };
+
+      messages.push(newMessage);
+      localStorage.setItem(messagesKey, JSON.stringify(messages));
+
+      // Clear the message box and reload messages
+      document.getElementById('message-box').value = '';
+      loadMessages();
+    }
+
+    // Load messages when the page loads
+    window.onload = loadMessages;
+
+    // Go back to previous page
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+</body>
+</html>

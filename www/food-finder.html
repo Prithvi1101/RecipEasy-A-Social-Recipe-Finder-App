@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RecipEasy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .back-btn {
+      background-color: #ccc;
+      color: #333;
+      padding: 0.5em 1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 1em;
+    }
+
+    .back-btn:hover {
+      background-color: #bbb;
+    }
+  </style>
+</head>
+<body>
+
+  
+
+  <div class="container">
+    <button class="back-btn" onclick="goBack()">🔙 Back</button>
+    <!-- Search Section -->
+    <div class="search-container">
+      <input type="text" placeholder="Type a Dish Name Here..." id="user-inp" autocomplete="off" />
+      <button id="search-btn">Search</button>
+    </div>
+
+    <!-- Search History Section -->
+    <div id="search-history-container">
+      <span>Recent Searches:</span>
+      <button id="clear-history-btn" title="Clear search history">Clear</button>
+      <div id="search-history"></div>
+    </div>
+
+    <br>
+
+    <!-- Filter Section -->
+    <div class="filter-container">
+      <input type="text" id="letter-input" placeholder="Filter by first letter (e.g., A)" />
+      <button id="letter-btn">Search by Letter</button>
+      <br>
+      <input type="text" id="ingredient-input" placeholder="Enter ingredient (e.g., chicken)" />
+      <br>
+      <button id="ingredient-btn">Filter by Ingredient</button>
+      <button id="random-btn">Get a Random Meal</button>
+    </div>
+
+    <!-- Meal Results Section -->
+    <div id="result"></div>
+
+    <!-- Favorites Section -->
+    <div id="favorites-section">
+      <h3>Your Favorite Dishes</h3>
+      <ul id="favorites-list"></ul>
+    </div>
+  </div>
+
+  <!-- Recipe Panel and Overlay -->
+  <div id="overlay"></div>
+  <div id="recipe-panel"></div>
+
+  <script>
+    function goBack() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "dashboard.html";
+      }
+    }
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>

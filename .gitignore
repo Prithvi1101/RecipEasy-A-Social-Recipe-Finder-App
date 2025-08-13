@@ -1,0 +1,31 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Env / secrets
+.env
+.env.*
+
+# Node
+node_modules/
+**/node_modules/
+.pnpm-store/
+
+# Firebase (keep configs, ignore cache)
+.firebase/
+
+# Editors
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# DO NOT ignore these so they appear on GitHub
+# (leave these lines commented or absent)
+# /dist/
+# /www/

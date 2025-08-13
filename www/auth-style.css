@@ -1,0 +1,89 @@
+body.bg-image {
+  background: url('bg-img.png') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.auth-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 2em;
+  background: #ffe5b4;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.logo {
+  width: 80px;
+  margin-bottom: 1em;
+}
+
+h1, h2 {
+  margin-bottom: 1em;
+  color: #202030;
+}
+
+.auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin-top: 2em;
+}
+
+input, select {
+  width: 100%;
+  padding: 0.8em;
+  margin: 0.5em 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn {
+  background-color: #f4c531;
+  border: none;
+  padding: 0.8em;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn:hover {
+  background-color: #d4b420;
+}
+
+/* Responsive */
+@media screen and (max-width: 480px) {
+  .auth-container {
+    margin: 5vh auto;
+    padding: 1em;
+  }
+}
+
+select#login-role {
+  width: 100%;
+  padding: 0.7em;
+  margin-bottom: 1em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.auth-container p a {
+  color: #6e0dad;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.auth-container p a:hover {
+  text-decoration: underline;
+}

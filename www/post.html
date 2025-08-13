@@ -1,0 +1,173 @@
+<!-- post.html (Enhanced with video support + type detection + size check + back button) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post a Recipe - RecipEasy</title>
+  <link rel="stylesheet" href="auth-style.css">
+  <style>
+    body {
+      background: url('bg-img.png') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .post-container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2em;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.7em;
+      margin-bottom: 1em;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .media-input {
+      margin-bottom: 1em;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: #f4c531;
+      color: white;
+      border: none;
+      padding: 0.9em;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .submit-btn:hover {
+      background-color: #d4b420;
+    }
+
+    .back-btn {
+      background-color: #ccc;
+      color: #333;
+      padding: 0.5em 1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 1em;
+    }
+
+    .back-btn:hover {
+      background-color: #bbb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="post-container">
+    <button class="back-btn" onclick="goBack()">🔙 Back</button>
+    <h2>Post a New Recipe</h2>
+    <form id="recipe-form">
+      <input type="text" id="title" placeholder="Recipe Title" required />
+      <textarea id="instructions" rows="5" placeholder="Instructions" required></textarea>
+      <input type="text" id="youtube" placeholder="YouTube Link (optional)" />
+      <input type="file" id="media" class="media-input" accept="image/*,video/*" required />
+      <button type="submit" class="submit-btn">Submit Recipe</button>
+    </form>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    function goBack() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "dashboard.html";
+      }
+    }
+
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        alert("You must be logged in to post.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const form = document.getElementById("recipe-form");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById("title").value.trim();
+        const instructions = document.getElementById("instructions").value.trim();
+        const youtube = document.getElementById("youtube").value.trim();
+        const mediaFile = document.getElementById("media").files[0];
+
+        if (!title || !instructions || !mediaFile) {
+          alert("Please complete all required fields.");
+          return;
+        }
+
+        if (mediaFile.size > 5 * 1024 * 1024) {
+          alert("File too large. Please keep it under 5MB.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64Media = reader.result;
+          const post = {
+            authorId: user.uid,
+            authorName: user.email,
+            authorPhoto: "default.png",
+            title,
+            instructions,
+            youtubeLink: youtube,
+            mediaUrls: [base64Media],
+            type: mediaFile.type,
+            timestamp: new Date().toISOString(),
+            likes: [],
+            comments: [],
+            status: "pending",
+            sharedBy: []
+          };
+
+          const posts = JSON.parse(localStorage.getItem("posts") || "[]");
+          posts.push(post);
+          localStorage.setItem("posts", JSON.stringify(posts));
+
+          alert("✅ Your recipe has been posted locally!");
+          form.reset();
+          window.location.href = "dashboard.html";
+        };
+
+        reader.readAsDataURL(mediaFile);
+      });
+    });
+  </script>
+</body>
+</html>

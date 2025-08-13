@@ -1,0 +1,9 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.recipeasy.app
+productName: Recipeasy
+win:
+  target: nsis
+files: []
+electronVersion: 16.0.0

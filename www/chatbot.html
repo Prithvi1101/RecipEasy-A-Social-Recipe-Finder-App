@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chatbot - RecipEasy</title>
+  <link rel="stylesheet" href="auth-style.css" />
+  <style>
+    body {
+      background: url('bg-img.png') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .chat-container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 1.5em;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      height: 80vh;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+
+    #messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1em;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 1em;
+      max-height: 70vh;
+      word-wrap: break-word;
+    }
+
+    .message {
+      background-color: #f4f4f4;
+      padding: 8px 12px;
+      margin: 6px 0;
+      border-radius: 8px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .message-header {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .message-input-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .message-input-container input {
+      flex: 1;
+      padding: 0.7em;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .message-input-container button {
+      background: #f4c531;
+      color: white;
+      border: none;
+      padding: 0.9em;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .message-input-container button:hover {
+      background-color: #d4b420;
+    }
+
+    .back-btn {
+      background-color: #ccc;
+      color: #333;
+      padding: 0.5em 1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 1em;
+    }
+
+    .back-btn:hover {
+      background-color: #bbb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-container">
+    <button class="back-btn" onclick="goBack()">🔙 Back</button>
+    <h2>Chat with FoodyBuddy</h2>
+
+    <div id="messages-container"></div>  <!-- Container to display chat messages -->
+
+    <div class="message-input-container">
+      <input type="text" id="message-input" placeholder="Ask me a recipe or restaurant question..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // Function to go back to the previous page or dashboard
+    function goBack() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "dashboard.html"; // Redirect to dashboard if history is not available
+      }
+    }
+
+    // Normalize user input (remove punctuation, convert to lowercase)
+    function normalizeInput(input) {
+      return input.replace(/[^\w\s]/gi, '').toLowerCase().trim();
+    }
+
+    // Function to get chatbot response
+    function getChatbotResponse(userMessage) {
+      const normalizedMessage = normalizeInput(userMessage);
+      
+      const responses = {
+        "hi": "Hi! How can I assist you today?",
+        "hello": "Hello! How can I assist you today?",
+  "pasta": "Ingredients for pasta:\n- 200g pasta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pasta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make pasta": "Ingredients for pasta:\n- 200g pasta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pasta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for pasta": "Ingredients for pasta:\n- 200g pasta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pasta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best pasta recipe": "Ingredients for pasta:\n- 200g pasta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pasta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for pasta": "Ingredients for pasta:\n- 200g pasta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pasta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "pizza": "Ingredients for pizza:\n- 200g pizza\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pizza and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make pizza": "Ingredients for pizza:\n- 200g pizza\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pizza and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for pizza": "Ingredients for pizza:\n- 200g pizza\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pizza and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best pizza recipe": "Ingredients for pizza:\n- 200g pizza\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pizza and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for pizza": "Ingredients for pizza:\n- 200g pizza\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pizza and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "burger": "Ingredients for burger:\n- 200g burger\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add burger and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make burger": "Ingredients for burger:\n- 200g burger\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add burger and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for burger": "Ingredients for burger:\n- 200g burger\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add burger and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best burger recipe": "Ingredients for burger:\n- 200g burger\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add burger and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for burger": "Ingredients for burger:\n- 200g burger\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add burger and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "sushi": "Ingredients for sushi:\n- 200g sushi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sushi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make sushi": "Ingredients for sushi:\n- 200g sushi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sushi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for sushi": "Ingredients for sushi:\n- 200g sushi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sushi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best sushi recipe": "Ingredients for sushi:\n- 200g sushi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sushi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for sushi": "Ingredients for sushi:\n- 200g sushi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sushi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "salad": "Ingredients for salad:\n- 200g salad\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add salad and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make salad": "Ingredients for salad:\n- 200g salad\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add salad and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for salad": "Ingredients for salad:\n- 200g salad\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add salad and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best salad recipe": "Ingredients for salad:\n- 200g salad\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add salad and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for salad": "Ingredients for salad:\n- 200g salad\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add salad and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "soup": "Ingredients for soup:\n- 200g soup\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add soup and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make soup": "Ingredients for soup:\n- 200g soup\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add soup and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for soup": "Ingredients for soup:\n- 200g soup\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add soup and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best soup recipe": "Ingredients for soup:\n- 200g soup\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add soup and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for soup": "Ingredients for soup:\n- 200g soup\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add soup and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "cake": "Ingredients for cake:\n- 200g cake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make cake": "Ingredients for cake:\n- 200g cake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for cake": "Ingredients for cake:\n- 200g cake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best cake recipe": "Ingredients for cake:\n- 200g cake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for cake": "Ingredients for cake:\n- 200g cake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "cookies": "Ingredients for cookies:\n- 200g cookies\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cookies and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make cookies": "Ingredients for cookies:\n- 200g cookies\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cookies and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for cookies": "Ingredients for cookies:\n- 200g cookies\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cookies and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best cookies recipe": "Ingredients for cookies:\n- 200g cookies\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cookies and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for cookies": "Ingredients for cookies:\n- 200g cookies\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cookies and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "brownies": "Ingredients for brownies:\n- 200g brownies\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add brownies and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make brownies": "Ingredients for brownies:\n- 200g brownies\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add brownies and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for brownies": "Ingredients for brownies:\n- 200g brownies\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add brownies and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best brownies recipe": "Ingredients for brownies:\n- 200g brownies\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add brownies and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for brownies": "Ingredients for brownies:\n- 200g brownies\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add brownies and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "pancakes": "Ingredients for pancakes:\n- 200g pancakes\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pancakes and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make pancakes": "Ingredients for pancakes:\n- 200g pancakes\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pancakes and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for pancakes": "Ingredients for pancakes:\n- 200g pancakes\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pancakes and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best pancakes recipe": "Ingredients for pancakes:\n- 200g pancakes\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pancakes and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for pancakes": "Ingredients for pancakes:\n- 200g pancakes\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pancakes and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "waffles": "Ingredients for waffles:\n- 200g waffles\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add waffles and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make waffles": "Ingredients for waffles:\n- 200g waffles\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add waffles and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for waffles": "Ingredients for waffles:\n- 200g waffles\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add waffles and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best waffles recipe": "Ingredients for waffles:\n- 200g waffles\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add waffles and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for waffles": "Ingredients for waffles:\n- 200g waffles\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add waffles and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "omelette": "Ingredients for omelette:\n- 200g omelette\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add omelette and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make omelette": "Ingredients for omelette:\n- 200g omelette\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add omelette and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for omelette": "Ingredients for omelette:\n- 200g omelette\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add omelette and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best omelette recipe": "Ingredients for omelette:\n- 200g omelette\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add omelette and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for omelette": "Ingredients for omelette:\n- 200g omelette\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add omelette and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "sandwich": "Ingredients for sandwich:\n- 200g sandwich\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sandwich and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make sandwich": "Ingredients for sandwich:\n- 200g sandwich\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sandwich and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for sandwich": "Ingredients for sandwich:\n- 200g sandwich\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sandwich and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best sandwich recipe": "Ingredients for sandwich:\n- 200g sandwich\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sandwich and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for sandwich": "Ingredients for sandwich:\n- 200g sandwich\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sandwich and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "burrito": "Ingredients for burrito:\n- 200g burrito\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add burrito and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make burrito": "Ingredients for burrito:\n- 200g burrito\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add burrito and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for burrito": "Ingredients for burrito:\n- 200g burrito\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add burrito and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best burrito recipe": "Ingredients for burrito:\n- 200g burrito\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add burrito and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for burrito": "Ingredients for burrito:\n- 200g burrito\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add burrito and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "taco": "Ingredients for taco:\n- 200g taco\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add taco and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make taco": "Ingredients for taco:\n- 200g taco\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add taco and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for taco": "Ingredients for taco:\n- 200g taco\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add taco and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best taco recipe": "Ingredients for taco:\n- 200g taco\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add taco and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for taco": "Ingredients for taco:\n- 200g taco\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add taco and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "risotto": "Ingredients for risotto:\n- 200g risotto\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add risotto and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make risotto": "Ingredients for risotto:\n- 200g risotto\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add risotto and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for risotto": "Ingredients for risotto:\n- 200g risotto\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add risotto and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best risotto recipe": "Ingredients for risotto:\n- 200g risotto\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add risotto and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for risotto": "Ingredients for risotto:\n- 200g risotto\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add risotto and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "curry": "Ingredients for curry:\n- 200g curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make curry": "Ingredients for curry:\n- 200g curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for curry": "Ingredients for curry:\n- 200g curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best curry recipe": "Ingredients for curry:\n- 200g curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for curry": "Ingredients for curry:\n- 200g curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "biriyani": "Ingredients for biriyani:\n- 200g biriyani\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add biriyani and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make biriyani": "Ingredients for biriyani:\n- 200g biriyani\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add biriyani and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for biriyani": "Ingredients for biriyani:\n- 200g biriyani\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add biriyani and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best biriyani recipe": "Ingredients for biriyani:\n- 200g biriyani\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add biriyani and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for biriyani": "Ingredients for biriyani:\n- 200g biriyani\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add biriyani and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "stew": "Ingredients for stew:\n- 200g stew\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add stew and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make stew": "Ingredients for stew:\n- 200g stew\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add stew and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for stew": "Ingredients for stew:\n- 200g stew\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add stew and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best stew recipe": "Ingredients for stew:\n- 200g stew\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add stew and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for stew": "Ingredients for stew:\n- 200g stew\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add stew and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "stir fry": "Ingredients for stir fry:\n- 200g stir fry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add stir fry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make stir fry": "Ingredients for stir fry:\n- 200g stir fry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add stir fry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for stir fry": "Ingredients for stir fry:\n- 200g stir fry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add stir fry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best stir fry recipe": "Ingredients for stir fry:\n- 200g stir fry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add stir fry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for stir fry": "Ingredients for stir fry:\n- 200g stir fry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add stir fry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "smoothie": "Ingredients for smoothie:\n- 200g smoothie\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add smoothie and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make smoothie": "Ingredients for smoothie:\n- 200g smoothie\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add smoothie and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for smoothie": "Ingredients for smoothie:\n- 200g smoothie\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add smoothie and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best smoothie recipe": "Ingredients for smoothie:\n- 200g smoothie\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add smoothie and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for smoothie": "Ingredients for smoothie:\n- 200g smoothie\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add smoothie and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "pie": "Ingredients for pie:\n- 200g pie\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pie and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make pie": "Ingredients for pie:\n- 200g pie\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pie and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for pie": "Ingredients for pie:\n- 200g pie\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pie and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best pie recipe": "Ingredients for pie:\n- 200g pie\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pie and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for pie": "Ingredients for pie:\n- 200g pie\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pie and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "cupcake": "Ingredients for cupcake:\n- 200g cupcake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cupcake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make cupcake": "Ingredients for cupcake:\n- 200g cupcake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cupcake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for cupcake": "Ingredients for cupcake:\n- 200g cupcake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cupcake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best cupcake recipe": "Ingredients for cupcake:\n- 200g cupcake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cupcake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for cupcake": "Ingredients for cupcake:\n- 200g cupcake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cupcake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "muffin": "Ingredients for muffin:\n- 200g muffin\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add muffin and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make muffin": "Ingredients for muffin:\n- 200g muffin\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add muffin and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for muffin": "Ingredients for muffin:\n- 200g muffin\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add muffin and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best muffin recipe": "Ingredients for muffin:\n- 200g muffin\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add muffin and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for muffin": "Ingredients for muffin:\n- 200g muffin\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add muffin and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "quiche": "Ingredients for quiche:\n- 200g quiche\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add quiche and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make quiche": "Ingredients for quiche:\n- 200g quiche\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add quiche and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for quiche": "Ingredients for quiche:\n- 200g quiche\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add quiche and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best quiche recipe": "Ingredients for quiche:\n- 200g quiche\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add quiche and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for quiche": "Ingredients for quiche:\n- 200g quiche\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add quiche and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ramen": "Ingredients for ramen:\n- 200g ramen\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ramen and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make ramen": "Ingredients for ramen:\n- 200g ramen\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ramen and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for ramen": "Ingredients for ramen:\n- 200g ramen\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ramen and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best ramen recipe": "Ingredients for ramen:\n- 200g ramen\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ramen and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for ramen": "Ingredients for ramen:\n- 200g ramen\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ramen and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "dumplings": "Ingredients for dumplings:\n- 200g dumplings\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dumplings and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make dumplings": "Ingredients for dumplings:\n- 200g dumplings\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dumplings and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for dumplings": "Ingredients for dumplings:\n- 200g dumplings\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dumplings and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best dumplings recipe": "Ingredients for dumplings:\n- 200g dumplings\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dumplings and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for dumplings": "Ingredients for dumplings:\n- 200g dumplings\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dumplings and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "lasagna": "Ingredients for lasagna:\n- 200g lasagna\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add lasagna and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make lasagna": "Ingredients for lasagna:\n- 200g lasagna\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add lasagna and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for lasagna": "Ingredients for lasagna:\n- 200g lasagna\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add lasagna and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best lasagna recipe": "Ingredients for lasagna:\n- 200g lasagna\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add lasagna and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for lasagna": "Ingredients for lasagna:\n- 200g lasagna\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add lasagna and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "macaroni": "Ingredients for macaroni:\n- 200g macaroni\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add macaroni and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make macaroni": "Ingredients for macaroni:\n- 200g macaroni\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add macaroni and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for macaroni": "Ingredients for macaroni:\n- 200g macaroni\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add macaroni and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best macaroni recipe": "Ingredients for macaroni:\n- 200g macaroni\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add macaroni and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for macaroni": "Ingredients for macaroni:\n- 200g macaroni\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add macaroni and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "spaghetti": "Ingredients for spaghetti:\n- 200g spaghetti\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add spaghetti and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make spaghetti": "Ingredients for spaghetti:\n- 200g spaghetti\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add spaghetti and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for spaghetti": "Ingredients for spaghetti:\n- 200g spaghetti\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add spaghetti and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best spaghetti recipe": "Ingredients for spaghetti:\n- 200g spaghetti\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add spaghetti and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for spaghetti": "Ingredients for spaghetti:\n- 200g spaghetti\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add spaghetti and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "linguine": "Ingredients for linguine:\n- 200g linguine\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add linguine and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make linguine": "Ingredients for linguine:\n- 200g linguine\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add linguine and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for linguine": "Ingredients for linguine:\n- 200g linguine\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add linguine and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best linguine recipe": "Ingredients for linguine:\n- 200g linguine\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add linguine and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for linguine": "Ingredients for linguine:\n- 200g linguine\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add linguine and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "fettuccine": "Ingredients for fettuccine:\n- 200g fettuccine\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add fettuccine and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make fettuccine": "Ingredients for fettuccine:\n- 200g fettuccine\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add fettuccine and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for fettuccine": "Ingredients for fettuccine:\n- 200g fettuccine\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add fettuccine and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best fettuccine recipe": "Ingredients for fettuccine:\n- 200g fettuccine\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add fettuccine and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for fettuccine": "Ingredients for fettuccine:\n- 200g fettuccine\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add fettuccine and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "gnocchi": "Ingredients for gnocchi:\n- 200g gnocchi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gnocchi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make gnocchi": "Ingredients for gnocchi:\n- 200g gnocchi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gnocchi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for gnocchi": "Ingredients for gnocchi:\n- 200g gnocchi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gnocchi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best gnocchi recipe": "Ingredients for gnocchi:\n- 200g gnocchi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gnocchi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for gnocchi": "Ingredients for gnocchi:\n- 200g gnocchi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gnocchi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ravioli": "Ingredients for ravioli:\n- 200g ravioli\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ravioli and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make ravioli": "Ingredients for ravioli:\n- 200g ravioli\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ravioli and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for ravioli": "Ingredients for ravioli:\n- 200g ravioli\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ravioli and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best ravioli recipe": "Ingredients for ravioli:\n- 200g ravioli\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ravioli and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for ravioli": "Ingredients for ravioli:\n- 200g ravioli\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ravioli and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "tortellini": "Ingredients for tortellini:\n- 200g tortellini\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tortellini and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make tortellini": "Ingredients for tortellini:\n- 200g tortellini\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tortellini and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for tortellini": "Ingredients for tortellini:\n- 200g tortellini\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tortellini and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best tortellini recipe": "Ingredients for tortellini:\n- 200g tortellini\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tortellini and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for tortellini": "Ingredients for tortellini:\n- 200g tortellini\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tortellini and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "bruschetta": "Ingredients for bruschetta:\n- 200g bruschetta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bruschetta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make bruschetta": "Ingredients for bruschetta:\n- 200g bruschetta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bruschetta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for bruschetta": "Ingredients for bruschetta:\n- 200g bruschetta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bruschetta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best bruschetta recipe": "Ingredients for bruschetta:\n- 200g bruschetta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bruschetta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for bruschetta": "Ingredients for bruschetta:\n- 200g bruschetta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bruschetta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "tapas": "Ingredients for tapas:\n- 200g tapas\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tapas and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make tapas": "Ingredients for tapas:\n- 200g tapas\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tapas and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for tapas": "Ingredients for tapas:\n- 200g tapas\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tapas and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best tapas recipe": "Ingredients for tapas:\n- 200g tapas\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tapas and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for tapas": "Ingredients for tapas:\n- 200g tapas\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tapas and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "paella": "Ingredients for paella:\n- 200g paella\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add paella and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make paella": "Ingredients for paella:\n- 200g paella\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add paella and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for paella": "Ingredients for paella:\n- 200g paella\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add paella and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best paella recipe": "Ingredients for paella:\n- 200g paella\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add paella and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for paella": "Ingredients for paella:\n- 200g paella\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add paella and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "pho": "Ingredients for pho:\n- 200g pho\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pho and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make pho": "Ingredients for pho:\n- 200g pho\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pho and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for pho": "Ingredients for pho:\n- 200g pho\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pho and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best pho recipe": "Ingredients for pho:\n- 200g pho\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pho and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for pho": "Ingredients for pho:\n- 200g pho\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pho and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "hotpot": "Ingredients for hotpot:\n- 200g hotpot\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add hotpot and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make hotpot": "Ingredients for hotpot:\n- 200g hotpot\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add hotpot and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for hotpot": "Ingredients for hotpot:\n- 200g hotpot\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add hotpot and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best hotpot recipe": "Ingredients for hotpot:\n- 200g hotpot\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add hotpot and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for hotpot": "Ingredients for hotpot:\n- 200g hotpot\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add hotpot and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "fondue": "Ingredients for fondue:\n- 200g fondue\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add fondue and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make fondue": "Ingredients for fondue:\n- 200g fondue\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add fondue and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for fondue": "Ingredients for fondue:\n- 200g fondue\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add fondue and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best fondue recipe": "Ingredients for fondue:\n- 200g fondue\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add fondue and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for fondue": "Ingredients for fondue:\n- 200g fondue\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add fondue and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "sashimi": "Ingredients for sashimi:\n- 200g sashimi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sashimi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make sashimi": "Ingredients for sashimi:\n- 200g sashimi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sashimi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for sashimi": "Ingredients for sashimi:\n- 200g sashimi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sashimi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best sashimi recipe": "Ingredients for sashimi:\n- 200g sashimi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sashimi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for sashimi": "Ingredients for sashimi:\n- 200g sashimi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sashimi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "tiramisu": "Ingredients for tiramisu:\n- 200g tiramisu\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tiramisu and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make tiramisu": "Ingredients for tiramisu:\n- 200g tiramisu\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tiramisu and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for tiramisu": "Ingredients for tiramisu:\n- 200g tiramisu\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tiramisu and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best tiramisu recipe": "Ingredients for tiramisu:\n- 200g tiramisu\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tiramisu and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for tiramisu": "Ingredients for tiramisu:\n- 200g tiramisu\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tiramisu and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "gelato": "Ingredients for gelato:\n- 200g gelato\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gelato and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make gelato": "Ingredients for gelato:\n- 200g gelato\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gelato and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for gelato": "Ingredients for gelato:\n- 200g gelato\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gelato and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best gelato recipe": "Ingredients for gelato:\n- 200g gelato\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gelato and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for gelato": "Ingredients for gelato:\n- 200g gelato\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gelato and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "cheesecake": "Ingredients for cheesecake:\n- 200g cheesecake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cheesecake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make cheesecake": "Ingredients for cheesecake:\n- 200g cheesecake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cheesecake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for cheesecake": "Ingredients for cheesecake:\n- 200g cheesecake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cheesecake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best cheesecake recipe": "Ingredients for cheesecake:\n- 200g cheesecake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cheesecake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for cheesecake": "Ingredients for cheesecake:\n- 200g cheesecake\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cheesecake and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "macaron": "Ingredients for macaron:\n- 200g macaron\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add macaron and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make macaron": "Ingredients for macaron:\n- 200g macaron\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add macaron and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for macaron": "Ingredients for macaron:\n- 200g macaron\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add macaron and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best macaron recipe": "Ingredients for macaron:\n- 200g macaron\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add macaron and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for macaron": "Ingredients for macaron:\n- 200g macaron\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add macaron and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "crepe": "Ingredients for crepe:\n- 200g crepe\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add crepe and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make crepe": "Ingredients for crepe:\n- 200g crepe\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add crepe and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for crepe": "Ingredients for crepe:\n- 200g crepe\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add crepe and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best crepe recipe": "Ingredients for crepe:\n- 200g crepe\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add crepe and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for crepe": "Ingredients for crepe:\n- 200g crepe\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add crepe and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "falafel": "Ingredients for falafel:\n- 200g falafel\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add falafel and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make falafel": "Ingredients for falafel:\n- 200g falafel\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add falafel and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for falafel": "Ingredients for falafel:\n- 200g falafel\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add falafel and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best falafel recipe": "Ingredients for falafel:\n- 200g falafel\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add falafel and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for falafel": "Ingredients for falafel:\n- 200g falafel\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add falafel and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "hummus": "Ingredients for hummus:\n- 200g hummus\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add hummus and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make hummus": "Ingredients for hummus:\n- 200g hummus\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add hummus and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for hummus": "Ingredients for hummus:\n- 200g hummus\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add hummus and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best hummus recipe": "Ingredients for hummus:\n- 200g hummus\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add hummus and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for hummus": "Ingredients for hummus:\n- 200g hummus\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add hummus and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "shakshuka": "Ingredients for shakshuka:\n- 200g shakshuka\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add shakshuka and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make shakshuka": "Ingredients for shakshuka:\n- 200g shakshuka\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add shakshuka and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for shakshuka": "Ingredients for shakshuka:\n- 200g shakshuka\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add shakshuka and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best shakshuka recipe": "Ingredients for shakshuka:\n- 200g shakshuka\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add shakshuka and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for shakshuka": "Ingredients for shakshuka:\n- 200g shakshuka\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add shakshuka and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "goulash": "Ingredients for goulash:\n- 200g goulash\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add goulash and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make goulash": "Ingredients for goulash:\n- 200g goulash\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add goulash and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for goulash": "Ingredients for goulash:\n- 200g goulash\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add goulash and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best goulash recipe": "Ingredients for goulash:\n- 200g goulash\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add goulash and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for goulash": "Ingredients for goulash:\n- 200g goulash\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add goulash and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "chili": "Ingredients for chili:\n- 200g chili\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add chili and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make chili": "Ingredients for chili:\n- 200g chili\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add chili and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for chili": "Ingredients for chili:\n- 200g chili\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add chili and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best chili recipe": "Ingredients for chili:\n- 200g chili\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add chili and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for chili": "Ingredients for chili:\n- 200g chili\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add chili and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "enchiladas": "Ingredients for enchiladas:\n- 200g enchiladas\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add enchiladas and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make enchiladas": "Ingredients for enchiladas:\n- 200g enchiladas\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add enchiladas and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for enchiladas": "Ingredients for enchiladas:\n- 200g enchiladas\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add enchiladas and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best enchiladas recipe": "Ingredients for enchiladas:\n- 200g enchiladas\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add enchiladas and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for enchiladas": "Ingredients for enchiladas:\n- 200g enchiladas\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add enchiladas and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "nachos": "Ingredients for nachos:\n- 200g nachos\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add nachos and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make nachos": "Ingredients for nachos:\n- 200g nachos\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add nachos and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for nachos": "Ingredients for nachos:\n- 200g nachos\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add nachos and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best nachos recipe": "Ingredients for nachos:\n- 200g nachos\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add nachos and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for nachos": "Ingredients for nachos:\n- 200g nachos\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add nachos and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "kimchi": "Ingredients for kimchi:\n- 200g kimchi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kimchi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make kimchi": "Ingredients for kimchi:\n- 200g kimchi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kimchi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for kimchi": "Ingredients for kimchi:\n- 200g kimchi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kimchi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best kimchi recipe": "Ingredients for kimchi:\n- 200g kimchi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kimchi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for kimchi": "Ingredients for kimchi:\n- 200g kimchi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kimchi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "bibimbap": "Ingredients for bibimbap:\n- 200g bibimbap\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bibimbap and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make bibimbap": "Ingredients for bibimbap:\n- 200g bibimbap\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bibimbap and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for bibimbap": "Ingredients for bibimbap:\n- 200g bibimbap\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bibimbap and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best bibimbap recipe": "Ingredients for bibimbap:\n- 200g bibimbap\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bibimbap and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for bibimbap": "Ingredients for bibimbap:\n- 200g bibimbap\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bibimbap and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "bulgogi": "Ingredients for bulgogi:\n- 200g bulgogi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bulgogi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make bulgogi": "Ingredients for bulgogi:\n- 200g bulgogi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bulgogi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for bulgogi": "Ingredients for bulgogi:\n- 200g bulgogi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bulgogi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best bulgogi recipe": "Ingredients for bulgogi:\n- 200g bulgogi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bulgogi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for bulgogi": "Ingredients for bulgogi:\n- 200g bulgogi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bulgogi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "udon": "Ingredients for udon:\n- 200g udon\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add udon and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make udon": "Ingredients for udon:\n- 200g udon\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add udon and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for udon": "Ingredients for udon:\n- 200g udon\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add udon and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best udon recipe": "Ingredients for udon:\n- 200g udon\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add udon and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for udon": "Ingredients for udon:\n- 200g udon\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add udon and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "soba": "Ingredients for soba:\n- 200g soba\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add soba and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make soba": "Ingredients for soba:\n- 200g soba\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add soba and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for soba": "Ingredients for soba:\n- 200g soba\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add soba and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best soba recipe": "Ingredients for soba:\n- 200g soba\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add soba and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for soba": "Ingredients for soba:\n- 200g soba\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add soba and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "pad thai": "Ingredients for pad thai:\n- 200g pad thai\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pad thai and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make pad thai": "Ingredients for pad thai:\n- 200g pad thai\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pad thai and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for pad thai": "Ingredients for pad thai:\n- 200g pad thai\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pad thai and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best pad thai recipe": "Ingredients for pad thai:\n- 200g pad thai\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pad thai and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for pad thai": "Ingredients for pad thai:\n- 200g pad thai\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pad thai and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "green curry": "Ingredients for green curry:\n- 200g green curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add green curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make green curry": "Ingredients for green curry:\n- 200g green curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add green curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for green curry": "Ingredients for green curry:\n- 200g green curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add green curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best green curry recipe": "Ingredients for green curry:\n- 200g green curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add green curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for green curry": "Ingredients for green curry:\n- 200g green curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add green curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "red curry": "Ingredients for red curry:\n- 200g red curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add red curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make red curry": "Ingredients for red curry:\n- 200g red curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add red curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for red curry": "Ingredients for red curry:\n- 200g red curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add red curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best red curry recipe": "Ingredients for red curry:\n- 200g red curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add red curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for red curry": "Ingredients for red curry:\n- 200g red curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add red curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "massaman curry": "Ingredients for massaman curry:\n- 200g massaman curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add massaman curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make massaman curry": "Ingredients for massaman curry:\n- 200g massaman curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add massaman curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for massaman curry": "Ingredients for massaman curry:\n- 200g massaman curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add massaman curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best massaman curry recipe": "Ingredients for massaman curry:\n- 200g massaman curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add massaman curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for massaman curry": "Ingredients for massaman curry:\n- 200g massaman curry\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add massaman curry and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "tom yum": "Ingredients for tom yum:\n- 200g tom yum\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tom yum and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make tom yum": "Ingredients for tom yum:\n- 200g tom yum\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tom yum and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for tom yum": "Ingredients for tom yum:\n- 200g tom yum\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tom yum and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best tom yum recipe": "Ingredients for tom yum:\n- 200g tom yum\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tom yum and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for tom yum": "Ingredients for tom yum:\n- 200g tom yum\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tom yum and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "dim sum": "Ingredients for dim sum:\n- 200g dim sum\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dim sum and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make dim sum": "Ingredients for dim sum:\n- 200g dim sum\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dim sum and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for dim sum": "Ingredients for dim sum:\n- 200g dim sum\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dim sum and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best dim sum recipe": "Ingredients for dim sum:\n- 200g dim sum\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dim sum and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for dim sum": "Ingredients for dim sum:\n- 200g dim sum\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dim sum and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "polenta": "Ingredients for polenta:\n- 200g polenta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add polenta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make polenta": "Ingredients for polenta:\n- 200g polenta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add polenta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for polenta": "Ingredients for polenta:\n- 200g polenta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add polenta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best polenta recipe": "Ingredients for polenta:\n- 200g polenta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add polenta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for polenta": "Ingredients for polenta:\n- 200g polenta\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add polenta and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "empanada": "Ingredients for empanada:\n- 200g empanada\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add empanada and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make empanada": "Ingredients for empanada:\n- 200g empanada\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add empanada and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for empanada": "Ingredients for empanada:\n- 200g empanada\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add empanada and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best empanada recipe": "Ingredients for empanada:\n- 200g empanada\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add empanada and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for empanada": "Ingredients for empanada:\n- 200g empanada\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add empanada and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "arepa": "Ingredients for arepa:\n- 200g arepa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add arepa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make arepa": "Ingredients for arepa:\n- 200g arepa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add arepa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for arepa": "Ingredients for arepa:\n- 200g arepa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add arepa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best arepa recipe": "Ingredients for arepa:\n- 200g arepa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add arepa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for arepa": "Ingredients for arepa:\n- 200g arepa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add arepa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "tamales": "Ingredients for tamales:\n- 200g tamales\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tamales and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make tamales": "Ingredients for tamales:\n- 200g tamales\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tamales and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for tamales": "Ingredients for tamales:\n- 200g tamales\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tamales and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best tamales recipe": "Ingredients for tamales:\n- 200g tamales\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tamales and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for tamales": "Ingredients for tamales:\n- 200g tamales\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add tamales and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ceviche": "Ingredients for ceviche:\n- 200g ceviche\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ceviche and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make ceviche": "Ingredients for ceviche:\n- 200g ceviche\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ceviche and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for ceviche": "Ingredients for ceviche:\n- 200g ceviche\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ceviche and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best ceviche recipe": "Ingredients for ceviche:\n- 200g ceviche\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ceviche and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for ceviche": "Ingredients for ceviche:\n- 200g ceviche\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ceviche and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "gyro": "Ingredients for gyro:\n- 200g gyro\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gyro and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make gyro": "Ingredients for gyro:\n- 200g gyro\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gyro and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for gyro": "Ingredients for gyro:\n- 200g gyro\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gyro and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best gyro recipe": "Ingredients for gyro:\n- 200g gyro\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gyro and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for gyro": "Ingredients for gyro:\n- 200g gyro\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gyro and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "shawarma": "Ingredients for shawarma:\n- 200g shawarma\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add shawarma and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make shawarma": "Ingredients for shawarma:\n- 200g shawarma\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add shawarma and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for shawarma": "Ingredients for shawarma:\n- 200g shawarma\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add shawarma and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best shawarma recipe": "Ingredients for shawarma:\n- 200g shawarma\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add shawarma and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for shawarma": "Ingredients for shawarma:\n- 200g shawarma\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add shawarma and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "kebab": "Ingredients for kebab:\n- 200g kebab\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kebab and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make kebab": "Ingredients for kebab:\n- 200g kebab\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kebab and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for kebab": "Ingredients for kebab:\n- 200g kebab\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kebab and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best kebab recipe": "Ingredients for kebab:\n- 200g kebab\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kebab and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for kebab": "Ingredients for kebab:\n- 200g kebab\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kebab and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "souvlaki": "Ingredients for souvlaki:\n- 200g souvlaki\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add souvlaki and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make souvlaki": "Ingredients for souvlaki:\n- 200g souvlaki\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add souvlaki and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for souvlaki": "Ingredients for souvlaki:\n- 200g souvlaki\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add souvlaki and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best souvlaki recipe": "Ingredients for souvlaki:\n- 200g souvlaki\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add souvlaki and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for souvlaki": "Ingredients for souvlaki:\n- 200g souvlaki\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add souvlaki and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "meze": "Ingredients for meze:\n- 200g meze\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add meze and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make meze": "Ingredients for meze:\n- 200g meze\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add meze and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for meze": "Ingredients for meze:\n- 200g meze\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add meze and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best meze recipe": "Ingredients for meze:\n- 200g meze\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add meze and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for meze": "Ingredients for meze:\n- 200g meze\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add meze and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "borscht": "Ingredients for borscht:\n- 200g borscht\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add borscht and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make borscht": "Ingredients for borscht:\n- 200g borscht\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add borscht and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for borscht": "Ingredients for borscht:\n- 200g borscht\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add borscht and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best borscht recipe": "Ingredients for borscht:\n- 200g borscht\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add borscht and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for borscht": "Ingredients for borscht:\n- 200g borscht\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add borscht and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "pierogi": "Ingredients for pierogi:\n- 200g pierogi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pierogi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make pierogi": "Ingredients for pierogi:\n- 200g pierogi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pierogi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for pierogi": "Ingredients for pierogi:\n- 200g pierogi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pierogi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best pierogi recipe": "Ingredients for pierogi:\n- 200g pierogi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pierogi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for pierogi": "Ingredients for pierogi:\n- 200g pierogi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pierogi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "sauerkraut": "Ingredients for sauerkraut:\n- 200g sauerkraut\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sauerkraut and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make sauerkraut": "Ingredients for sauerkraut:\n- 200g sauerkraut\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sauerkraut and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for sauerkraut": "Ingredients for sauerkraut:\n- 200g sauerkraut\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sauerkraut and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best sauerkraut recipe": "Ingredients for sauerkraut:\n- 200g sauerkraut\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sauerkraut and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for sauerkraut": "Ingredients for sauerkraut:\n- 200g sauerkraut\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add sauerkraut and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ratatouille": "Ingredients for ratatouille:\n- 200g ratatouille\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ratatouille and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make ratatouille": "Ingredients for ratatouille:\n- 200g ratatouille\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ratatouille and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for ratatouille": "Ingredients for ratatouille:\n- 200g ratatouille\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ratatouille and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best ratatouille recipe": "Ingredients for ratatouille:\n- 200g ratatouille\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ratatouille and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for ratatouille": "Ingredients for ratatouille:\n- 200g ratatouille\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ratatouille and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "coq au vin": "Ingredients for coq au vin:\n- 200g coq au vin\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add coq au vin and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make coq au vin": "Ingredients for coq au vin:\n- 200g coq au vin\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add coq au vin and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for coq au vin": "Ingredients for coq au vin:\n- 200g coq au vin\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add coq au vin and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best coq au vin recipe": "Ingredients for coq au vin:\n- 200g coq au vin\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add coq au vin and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for coq au vin": "Ingredients for coq au vin:\n- 200g coq au vin\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add coq au vin and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "bouillabaisse": "Ingredients for bouillabaisse:\n- 200g bouillabaisse\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bouillabaisse and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make bouillabaisse": "Ingredients for bouillabaisse:\n- 200g bouillabaisse\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bouillabaisse and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for bouillabaisse": "Ingredients for bouillabaisse:\n- 200g bouillabaisse\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bouillabaisse and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best bouillabaisse recipe": "Ingredients for bouillabaisse:\n- 200g bouillabaisse\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bouillabaisse and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for bouillabaisse": "Ingredients for bouillabaisse:\n- 200g bouillabaisse\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add bouillabaisse and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "cassoulet": "Ingredients for cassoulet:\n- 200g cassoulet\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cassoulet and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make cassoulet": "Ingredients for cassoulet:\n- 200g cassoulet\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cassoulet and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for cassoulet": "Ingredients for cassoulet:\n- 200g cassoulet\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cassoulet and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best cassoulet recipe": "Ingredients for cassoulet:\n- 200g cassoulet\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cassoulet and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for cassoulet": "Ingredients for cassoulet:\n- 200g cassoulet\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add cassoulet and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "moussaka": "Ingredients for moussaka:\n- 200g moussaka\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add moussaka and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make moussaka": "Ingredients for moussaka:\n- 200g moussaka\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add moussaka and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for moussaka": "Ingredients for moussaka:\n- 200g moussaka\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add moussaka and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best moussaka recipe": "Ingredients for moussaka:\n- 200g moussaka\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add moussaka and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for moussaka": "Ingredients for moussaka:\n- 200g moussaka\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add moussaka and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "spanakopita": "Ingredients for spanakopita:\n- 200g spanakopita\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add spanakopita and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make spanakopita": "Ingredients for spanakopita:\n- 200g spanakopita\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add spanakopita and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for spanakopita": "Ingredients for spanakopita:\n- 200g spanakopita\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add spanakopita and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best spanakopita recipe": "Ingredients for spanakopita:\n- 200g spanakopita\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add spanakopita and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for spanakopita": "Ingredients for spanakopita:\n- 200g spanakopita\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add spanakopita and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "dolma": "Ingredients for dolma:\n- 200g dolma\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dolma and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make dolma": "Ingredients for dolma:\n- 200g dolma\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dolma and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for dolma": "Ingredients for dolma:\n- 200g dolma\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dolma and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best dolma recipe": "Ingredients for dolma:\n- 200g dolma\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dolma and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for dolma": "Ingredients for dolma:\n- 200g dolma\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dolma and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "kabsa": "Ingredients for kabsa:\n- 200g kabsa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kabsa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make kabsa": "Ingredients for kabsa:\n- 200g kabsa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kabsa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for kabsa": "Ingredients for kabsa:\n- 200g kabsa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kabsa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best kabsa recipe": "Ingredients for kabsa:\n- 200g kabsa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kabsa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for kabsa": "Ingredients for kabsa:\n- 200g kabsa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kabsa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "adobo": "Ingredients for adobo:\n- 200g adobo\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add adobo and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make adobo": "Ingredients for adobo:\n- 200g adobo\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add adobo and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for adobo": "Ingredients for adobo:\n- 200g adobo\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add adobo and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best adobo recipe": "Ingredients for adobo:\n- 200g adobo\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add adobo and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for adobo": "Ingredients for adobo:\n- 200g adobo\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add adobo and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "pav bhaji": "Ingredients for pav bhaji:\n- 200g pav bhaji\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pav bhaji and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make pav bhaji": "Ingredients for pav bhaji:\n- 200g pav bhaji\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pav bhaji and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for pav bhaji": "Ingredients for pav bhaji:\n- 200g pav bhaji\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pav bhaji and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best pav bhaji recipe": "Ingredients for pav bhaji:\n- 200g pav bhaji\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pav bhaji and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for pav bhaji": "Ingredients for pav bhaji:\n- 200g pav bhaji\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pav bhaji and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "idli": "Ingredients for idli:\n- 200g idli\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add idli and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make idli": "Ingredients for idli:\n- 200g idli\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add idli and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for idli": "Ingredients for idli:\n- 200g idli\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add idli and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best idli recipe": "Ingredients for idli:\n- 200g idli\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add idli and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for idli": "Ingredients for idli:\n- 200g idli\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add idli and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "dosa": "Ingredients for dosa:\n- 200g dosa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dosa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make dosa": "Ingredients for dosa:\n- 200g dosa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dosa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for dosa": "Ingredients for dosa:\n- 200g dosa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dosa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best dosa recipe": "Ingredients for dosa:\n- 200g dosa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dosa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for dosa": "Ingredients for dosa:\n- 200g dosa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add dosa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "samosa": "Ingredients for samosa:\n- 200g samosa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add samosa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make samosa": "Ingredients for samosa:\n- 200g samosa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add samosa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for samosa": "Ingredients for samosa:\n- 200g samosa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add samosa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best samosa recipe": "Ingredients for samosa:\n- 200g samosa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add samosa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for samosa": "Ingredients for samosa:\n- 200g samosa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add samosa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "pakora": "Ingredients for pakora:\n- 200g pakora\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pakora and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make pakora": "Ingredients for pakora:\n- 200g pakora\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pakora and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for pakora": "Ingredients for pakora:\n- 200g pakora\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pakora and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best pakora recipe": "Ingredients for pakora:\n- 200g pakora\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pakora and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for pakora": "Ingredients for pakora:\n- 200g pakora\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add pakora and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "jalebi": "Ingredients for jalebi:\n- 200g jalebi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add jalebi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make jalebi": "Ingredients for jalebi:\n- 200g jalebi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add jalebi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for jalebi": "Ingredients for jalebi:\n- 200g jalebi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add jalebi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best jalebi recipe": "Ingredients for jalebi:\n- 200g jalebi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add jalebi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for jalebi": "Ingredients for jalebi:\n- 200g jalebi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add jalebi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "gulab jamun": "Ingredients for gulab jamun:\n- 200g gulab jamun\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gulab jamun and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make gulab jamun": "Ingredients for gulab jamun:\n- 200g gulab jamun\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gulab jamun and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for gulab jamun": "Ingredients for gulab jamun:\n- 200g gulab jamun\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gulab jamun and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best gulab jamun recipe": "Ingredients for gulab jamun:\n- 200g gulab jamun\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gulab jamun and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for gulab jamun": "Ingredients for gulab jamun:\n- 200g gulab jamun\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add gulab jamun and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "rasgulla": "Ingredients for rasgulla:\n- 200g rasgulla\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add rasgulla and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make rasgulla": "Ingredients for rasgulla:\n- 200g rasgulla\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add rasgulla and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for rasgulla": "Ingredients for rasgulla:\n- 200g rasgulla\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add rasgulla and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best rasgulla recipe": "Ingredients for rasgulla:\n- 200g rasgulla\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add rasgulla and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for rasgulla": "Ingredients for rasgulla:\n- 200g rasgulla\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add rasgulla and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ladoo": "Ingredients for ladoo:\n- 200g ladoo\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ladoo and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make ladoo": "Ingredients for ladoo:\n- 200g ladoo\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ladoo and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for ladoo": "Ingredients for ladoo:\n- 200g ladoo\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ladoo and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best ladoo recipe": "Ingredients for ladoo:\n- 200g ladoo\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ladoo and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for ladoo": "Ingredients for ladoo:\n- 200g ladoo\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add ladoo and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "barfi": "Ingredients for barfi:\n- 200g barfi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add barfi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make barfi": "Ingredients for barfi:\n- 200g barfi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add barfi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for barfi": "Ingredients for barfi:\n- 200g barfi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add barfi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best barfi recipe": "Ingredients for barfi:\n- 200g barfi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add barfi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for barfi": "Ingredients for barfi:\n- 200g barfi\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add barfi and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "rabri": "Ingredients for rabri:\n- 200g rabri\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add rabri and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make rabri": "Ingredients for rabri:\n- 200g rabri\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add rabri and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for rabri": "Ingredients for rabri:\n- 200g rabri\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add rabri and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best rabri recipe": "Ingredients for rabri:\n- 200g rabri\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add rabri and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for rabri": "Ingredients for rabri:\n- 200g rabri\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add rabri and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "kheer": "Ingredients for kheer:\n- 200g kheer\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kheer and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make kheer": "Ingredients for kheer:\n- 200g kheer\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kheer and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for kheer": "Ingredients for kheer:\n- 200g kheer\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kheer and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best kheer recipe": "Ingredients for kheer:\n- 200g kheer\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kheer and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for kheer": "Ingredients for kheer:\n- 200g kheer\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add kheer and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "halwa": "Ingredients for halwa:\n- 200g halwa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add halwa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "how to make halwa": "Ingredients for halwa:\n- 200g halwa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add halwa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "recipe for halwa": "Ingredients for halwa:\n- 200g halwa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add halwa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "best halwa recipe": "Ingredients for halwa:\n- 200g halwa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add halwa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+  "ingredients for halwa": "Ingredients for halwa:\n- 200g halwa\n- 1 tbsp oil\n- Salt, to taste\n\nSteps:\n1. Heat the oil in a pan.\n2. Add halwa and cook for 5-7 minutes.\n3. Season with salt and stir well.\n4. Cook until done and serve hot.\n",
+};
+
+
+      // Return a response based on the normalized user message or the default response
+      const message = responses[normalizedMessage] || "Sorry, I don't understand that. Can you try asking something else?";
+      return message;
+    }
+
+    // Function to send a message to the chatbot with a delay for simulating typing
+    async function sendMessage() {
+      const messageText = document.getElementById('message-input').value;
+
+      if (messageText.trim() === "") {
+        alert("Please enter a message!");
+        return;
+      }
+
+      // Display the user's message in the chat
+      displayChatMessage('You', messageText);
+
+      // Add a delay before showing the chatbot response
+      setTimeout(() => {
+        const chatbotReply = getChatbotResponse(messageText);
+        displayChatMessage('FoodyBuddy', chatbotReply);
+      }, 1000); // Delay for 1 second (adjustable)
+
+      document.getElementById('message-input').value = '';  // Clear message input field
+    }
+
+    // Function to display a message in the chat window
+    function displayChatMessage(sender, message) {
+      const messagesContainer = document.getElementById("messages-container");
+      const messageElement = document.createElement("div");
+      messageElement.classList.add("message");
+
+      messageElement.innerHTML = `
+        <div class="message-header">${sender}</div>
+        <p>${message}</p>
+      `;
+      
+      messagesContainer.appendChild(messageElement);
+    }
+  </script>
+
+</body>
+</html>

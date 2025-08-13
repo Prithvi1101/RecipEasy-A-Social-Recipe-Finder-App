@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">RecipEasy</string>
+    <string name="title_activity_main">RecipEasy</string>
+    <string name="package_name">com.hp.recipeasy</string>
+    <string name="custom_url_scheme">com.hp.recipeasy</string>
+</resources>

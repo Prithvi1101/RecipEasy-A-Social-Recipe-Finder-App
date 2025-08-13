@@ -1,0 +1,41 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - RecipEasy</title>
+  <link rel="stylesheet" href="auth-style.css">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+</head>
+
+<body class="bg-image">
+  <div class="auth-container">
+    <h2 style="font-family: 'Cursive', 'Lucida Handwriting', sans-serif;">Sign Up</h2>
+
+    <!-- 🛠️ Required by auth.js but was missing -->
+    <div id="loading-message" style="display:none; text-align:center; margin-bottom:10px; color:green;">
+      Account Created Successfully!
+    </div>
+
+    <form id="signup-form">
+      <input type="text" id="signup-name" placeholder="Full Name" required>
+      <input type="email" id="signup-email" placeholder="Email" required>
+      <input type="password" id="signup-password" placeholder="Password" required>
+
+      <select id="signup-role" required>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button type="submit" class="btn">Create Account</button>
+    </form>
+
+    <p><a href="login.html">Already have an account?</a></p>
+  </div>
+</body>
+</html>
