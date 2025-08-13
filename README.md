@@ -140,4 +140,4 @@ npm run build
 ```
 
 Made this for my Software Engineering and Requirements course and got the best project amongst 30+ other projects
-cd RecipEasy/desktop
+
