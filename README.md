@@ -151,5 +151,5 @@ npm start
 npm run build
 ```
 
-Made this for my Software Engineering and Requirements course and got the best project amongst 30+ other projects
+I made this for my Software Engineering and Requirements course and it was awarded the best project out of 30+ submissions.
 
