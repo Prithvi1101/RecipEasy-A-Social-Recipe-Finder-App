@@ -16,7 +16,7 @@ It works on **modern web browsers**, **Android devices**, and **desktop platform
 
 ## 📷 Screenshots
 
-Here are some screenshots of the RecipEasy app:
+Here are some screenshots of the RecipEasy app (only for the webapp version):
 
 <p align="center">
   <img src="images/img-1.PNG" alt="img-1" width="600">
