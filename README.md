@@ -14,6 +14,18 @@ RecipEasy consolidates:
 
 It works on **modern web browsers**, **Android devices**, and **desktop platforms**, supporting both **online** and **offline** usage.
 
+## 📷 Screenshots
+
+Here are some screenshots of the RecipEasy app:
+
+<p align="center">
+  <img src="images/img-1.PNG" alt="img-1" width="600">
+  <img src="images/img-2.PNG" alt="img-1" width="600">
+  <img src="images/img-3.PNG" alt="img-1" width="600">
+  <img src="images/img-4.PNG" alt="img-1" width="600">
+</p>
+---
+
 ---
 
 ## ✨ Features
