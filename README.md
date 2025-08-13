@@ -128,9 +128,7 @@ Press Run ▶ in Android Studio
 ### Clone the repository
 ```bash
 git clone https://github.com/Prithvi1101/RecipEasy-A-Social-Recipe-Finder-App.git
-```
-Made this for my Software Engineering and Requirements course and got the best project amongst 30+ other projects
-cd RecipEasy/desktop
+
 
 npm install
 ```
@@ -140,3 +138,6 @@ Add your Firebase config to src/firebaseConfig.js
 npm start
 npm run build
 ```
+
+Made this for my Software Engineering and Requirements course and got the best project amongst 30+ other projects
+cd RecipEasy/desktop
