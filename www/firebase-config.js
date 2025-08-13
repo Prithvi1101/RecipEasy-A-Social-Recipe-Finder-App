@@ -1,5 +1,5 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyC5DQTNFImszgTCjmP_MEG4bLbNouUnPR4",
+  apiKey: "YOUR GOOGLE API KEY",
   authDomain: "recipeasy-c3c16.firebaseapp.com",
   projectId: "recipeasy-c3c16",
   storageBucket: "recipeasy-c3c16.appspot.com",
