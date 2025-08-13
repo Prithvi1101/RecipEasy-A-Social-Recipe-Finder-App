@@ -1,95 +1,140 @@
 # 🍳 RecipEasy — A Social Recipe Finder App
 
-**RecipEasy** is a full-stack, cross-platform application that simplifies recipe discovery, creation, and sharing.  
-It combines community interaction, offline access, and powerful search capabilities into one intuitive platform.
+**RecipEasy** is a cross-platform recipe discovery and sharing app that blends social networking with cooking inspiration. Users can search, post, and engage with recipes, while admins moderate content and track analytics.
 
 ---
 
-## 📌 Project Overview
+## 📌 Overview
+Manual recipe management via web search or physical records is inefficient and fragmented.  
+RecipEasy consolidates:
+- Recipe discovery
+- Community interaction
+- Content creation & analytics
+- Administrative moderation tools
 
-Manual recipe management through web search or physical records can be inefficient, fragmented, and impersonal. Users often struggle to find, organize, and share culinary ideas across different platforms.
-
-**RecipEasy** solves this by integrating:
-- **Recipe discovery**
-- **Social networking**
-- **Content creation & analytics**
-- **Offline & online support**
-
-The app runs seamlessly on **web browsers** and **Android devices** with a mobile-friendly and desktop-friendly design.
+It works on **modern web browsers**, **Android devices**, and **desktop platforms**, supporting both **online** and **offline** usage.
 
 ---
 
-## ✨ Key Features
-
+## ✨ Features
 - **User Authentication & Profiles**
-  - Sign up, log in, and upload profile pictures
-  - Role-based access (User vs Admin)
-
-- **Recipe Search & Management**
-  - Search recipes by name, first letter, or ingredient (via [TheMealDB API](https://www.themealdb.com))
-  - Save favorite recipes locally (offline caching)
+  - Sign up, log in, upload profile pictures
+  - Role-based access (User / Admin)
+- **Recipe Search**
+  - Search by recipe name, first letter, or ingredient
+  - Powered by [TheMealDB API](https://www.themealdb.com)
+- **Recipe Management**
+  - Save favorite recipes
   - Maintain search history
-
-- **Content Creation & Interaction**
-  - Post original recipes with images, videos, or YouTube links
-  - Edit, delete, and view analytics for your posts
-  - Like, share, and comment on recipes
-  - Follow/unfollow other users
-
-- **Chat Features**
-  - Direct messaging between users
-  - Offline chatbot for quick help
-  - Online chatbot with attachment support
-
+- **Content Creation**
+  - Post recipes with images, videos, YouTube links
+  - Edit, delete, and view analytics
+- **Social Interaction**
+  - Like, share, comment
+  - Follow/unfollow users
+- **Messaging**
+  - Direct user-to-user chat
+  - Offline & online chatbot support
 - **Personalized Feed**
-  - Approved content from followed users
-
+  - Approved posts from followed users
 - **Admin Panel**
-  - Approve or reject posts
-  - View application-wide analytics
-  - Monitor full feed and rejected content
-
-- **Analytics & Statistics**
-  - Charts for likes per recipe, posting frequency, and more
-
+  - Approve/reject posts
+  - View rejected items
+  - Access analytics
+- **Analytics**
+  - Charts and stats for engagement, likes, and posting frequency
 - **Offline Support**
-  - LocalStorage & Firebase fallback for uninterrupted usage
+  - LocalStorage & Firebase fallback
+
+---
+
+## 🛠 Tech Stack
+- **Frontend:** HTML, CSS, JavaScript
+- **Mobile:** Java (Android Studio)
+- **Desktop:** Electron
+- **Backend:** Firebase, LocalStorage, MySQL
+- **API:** [TheMealDB](https://www.themealdb.com)
 
 ---
 
 ## 👥 User Classes
-
-- **Regular Users (Food Enthusiasts)**
+- **Regular Users**
   - Search, save, and share recipes
-  - Create posts and interact socially
+  - Post content and interact socially
 - **Admins**
-  - Moderate posts and manage analytics
-- **Guest Users**
-  - (Optional future enhancement) View public recipes without login
+  - Moderate posts
+  - Access analytics
+- **Guest Users** *(future enhancement)*
+  - View public recipes without login
 
 ---
 
 ## 💻 Operating Environment
-
-- **Operating Systems**
-  - Windows 7/8/10/11
-  - Android 8.0 and above
-
-- **Supported Browsers**
-  - Chrome, Firefox, Edge
-
-- **Development Stack**
-  - **Frontend:** HTML, CSS, JavaScript
-  - **Mobile:** Java (Android Studio)
-  - **Desktop:** Electron (Windows, macOS, Linux)
-  - **Backend/Storage:** Firebase, LocalStorage, MySQL (PC version)
+- **Operating Systems:** Windows 7/8/10/11, macOS, Linux, Android 8+
+- **Browsers:** Chrome, Firefox, Edge
 
 ---
 
 ## 🚀 Installation & Setup
 
 ### Web Version
-1. Clone the repository:
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/recipEasy.git
-   cd recipEasy
+   git clone https://github.com/Prithvi1101/RecipEasy-A-Social-Recipe-Finder-App.git
+   cd RecipEasy/web
+## 💻 Install dependencies
+- **Install Node.js
+- **Run
+  ```bash
+  npm install
+  
+## Configure Firebase
+1. Create a project in [Firebase Console](https://console.firebase.google.com/).  
+2. Enable the following services:
+   - Authentication
+   - Firestore
+   - Storage
+
+## Add Firebase Config
+- Add your Firebase configuration to `firebaseConfig.js`.
+
+## Run the App
+```bash
+npm run dev
+```
+### 🔹 Android Version
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Prithvi1101/RecipEasy-A-Social-Recipe-Finder-App.git
+   ```
+   Open in Android Studio
+
+Navigate to the android/ folder and open the project
+
+Configure Firebase
+
+Download google-services.json from Firebase Console
+
+Place it inside the app/ directory
+
+Build & Run
+
+Use an emulator or a physical device
+
+Press Run ▶ in Android Studio
+
+## 🔹 Desktop Version (Electron)
+
+### Clone the repository
+```bash
+git clone https://github.com/Prithvi1101/RecipEasy-A-Social-Recipe-Finder-App.git
+cd RecipEasy/desktop
+
+npm install
+```
+Configure Firebase
+Add your Firebase config to src/firebaseConfig.js
+```
+npm start
+npm run build
+```
